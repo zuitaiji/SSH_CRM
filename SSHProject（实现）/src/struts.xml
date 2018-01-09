@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	
+	<!-- 设置文件上传的大小 -->
+	<constant name="struts.multipart.maxSize" value="20971520"/>
+	<!-- 先配置包结构 -->
+	<package name="crm" extends="struts-default" namespace="/">
+		<!-- 配置拦截器 -->
+		<interceptors>
+			<interceptor name="myInterceptor" class="com.ithc.interceptor.UserInterceptor"></interceptor>
+		</interceptors>
+		
+		<!-- 配置全局的结果页面 -->
+		<global-results>
+			<result name="login" type="redirect">/login.jsp</result>
+		</global-results>
+
+		
+		<!-- 验证码 -->
+		<action name="vCode" class="com.ithc.action.Vcode" ></action>
+		
+		<!--用户模块  -->
+		<action name="user_*" class="userAction" method="{1}">
+			<result name="index" type="redirect">/index.jsp</result>
+			<result name="register" type="redirect">/register.jsp</result>
+			<result name="updatePassword">/updatePassword.jsp</result>
+			
+			<interceptor-ref name="myInterceptor">
+				<!-- 设置不拦截的方法 -->
+				<param name="excludeMethods">login,register,checkCode</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack"/>
+		</action>
+				
+		<!--  
+			客户模块
+		-->		
+		<action name="customer_*" class="customerAction" method="{1}">
+			<result name="initAddUI" type="redirect">/jsp/customer/add.jsp</result>
+			<result name="findByPage">/jsp/customer/list.jsp</result>
+			<result name="initUpdate">/jsp/customer/edit.jsp</result>
+			<result name="update" type="redirectAction">customer_findByPage.action</result>
+			<result name="findByLevel">/jsp/totals/level.jsp</result>
+			<result name="findBySource">/jsp/totals/sources.jsp</result>
+			
+			<interceptor-ref name="myInterceptor"/>
+			<!-- 引入文件上传的拦截器 -->
+			<interceptor-ref name="defaultStack"/>
+		</action>		
+		
+		<!--  
+			数据字典模块
+		-->
+		<action name="dict_*" class="dictAction" method="{1}"></action>
+		
+		<!-- 联系人模块 -->
+		<action name="linkman_*" class="linkManAction" method="{1}">
+			<result name="initAddUI" type="redirect">/jsp/linkman/add.jsp</result>
+			<result name="findByPage">/jsp/linkman/list.jsp</result>
+			<result name="initUpdate">/jsp/linkman/edit.jsp</result>
+			<result name="update" type="redirectAction">linkman_findByPage.action</result>
+			<result name="delete" type="chain">linkman_findByPage</result>
+			
+			<interceptor-ref name="myInterceptor"/>
+			<interceptor-ref name="defaultStack"/>
+		</action>
+		
+		<!-- 客户拜访模块 -->
+		<action name="visit_*" class="visitAction" method="{1}">
+			<result name="initAddUI">/jsp/visit/add.jsp</result>
+			<result name="findByPage">/jsp/visit/list.jsp</result>
+			
+			<interceptor-ref name="myInterceptor"/>
+			<interceptor-ref name="defaultStack"/>
+		</action>
+	</package>
+</struts>
+
+
+
+
+
+
+
+
+
+
+
+
+
